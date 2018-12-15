@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+  <head>
+    <style>
+    html, body {
+      background-color: #333;
+      color: white;
+      font-family: monospace;
+      margin: 0;
+      padding: 0;
+    }
+    /* The console container element */
+    #console {
+      height: 400px;
+      width: 750px;
+      position:relative;
+      background-color: black;
+      border: 2px solid #CCC;
+      margin: 0 auto;
+      margin-top: 50px;
+    }
+    /* The inner console element. */
+    .jqconsole {
+        padding: 10px;
+    }
+    /* The cursor. */
+    .jqconsole-cursor {
+        background-color: gray;
+    }
+    /* The cursor color when the console looses focus. */
+    .jqconsole-blurred .jqconsole-cursor {
+        background-color: #666;
+    }
+    /* The current prompt text color */
+    .jqconsole-prompt {
+        color: #0d0;
+    }
+    /* The command history */
+    .jqconsole-old-prompt {
+        color: #0b0;
+        font-weight: normal;
+    }
+    /* The text color when in input mode. */
+    .jqconsole-input {
+        color: #dd0;
+    }
+    /* Previously entered input. */
+    .jqconsole-old-input {
+        color: #bb0;
+        font-weight: normal;
+    }
+    /* The text color of the output. */
+    .jqconsole-output {
+        color: white;
+    }
+    </style>
+  </head>
+  <body>
+    <div id="console"></div>
+    <script src="jquery.min.js"></script>
+    <script src="jsxsi.js"></script>
+    <script src="jqconsole.min.js"></script>
+    <script>
+      // Test libclips.js compiled by emscripten, using jq-console
+      // see Github for details.
+      $(function () {
+        var banner = 'jsXSI.js : type (exit) to stop the script. Zoom: <Ctrl-[+|-]>\n';
+        var jqconsole = $('#console').jqconsole(banner, '> ');
+        ////////////////////////////////////
+        var env = CreateEnvironment();
+        var res = EnvLoad(env,"/myenvload.clp");
+        Module['print'] = function(text) { jqconsole.Write(text+'\n','jqconsole-output') } ;
+        ////////////////////////////////////
+        var startPrompt = function () {
+          // Start the prompt with history enabled.
+          jqconsole.Prompt(true, function (input) {
+             ExecOnce(env,input+"\n");
+            // Output input with the class jqconsole-output.
+            //jqconsole.Write(input + '\n', 'jqconsole-output');
+            // Restart the prompt.
+            startPrompt();
+          });
+        };
+        startPrompt();
+      });
+    </script>
+  </body>
+</html>
