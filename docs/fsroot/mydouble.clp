@@ -1,0 +1,1 @@
+(deffunction mydouble (?x) (return (* 2 ?x)))

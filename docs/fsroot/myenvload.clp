@@ -1,0 +1,1 @@
+(deffunction mytriple (?x) (return (* 3 ?x)))
